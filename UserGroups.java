@@ -21,6 +21,15 @@ public class UserGroups implements Visitable {
 
     private String groupID;
     private List<UserGroups> group = new ArrayList<UserGroups>();
+    private long creationTime;
+
+    public long getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
+    }
 
     public UserGroups(){
         setTotalGroups(getTotalGroups() + 1);

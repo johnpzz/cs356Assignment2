@@ -19,8 +19,14 @@ import javax.swing.JButton;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JTextField;
 import javax.swing.JTree;
@@ -79,9 +85,10 @@ public class MiniTwitterApp extends JFrame {
 
 
     private void initialize() {
+        long time = System.currentTimeMillis();
         
         this.setTitle("CS356 - Mini Twitter Application");
-        this.setSize(800, 800);
+        this.setSize(1000, 1000);
         Toolkit tk = Toolkit.getDefaultToolkit();
         Dimension dim = tk.getScreenSize();
      
@@ -110,54 +117,66 @@ public class MiniTwitterApp extends JFrame {
                         DefaultMutableTreeNode node4;
                         DefaultMutableTreeNode node5;
                         User user = new User("john");
+                        user.setCreationTime(time);
                         userMap.put("john", user);
                         add(new DefaultMutableTreeNode(user));
                         user = new User("bob");
+                        user.setCreationTime(System.currentTimeMillis());
                         add(new DefaultMutableTreeNode(user));
                         userMap.put("bob", user);
                         user = new User("steve");
+                        user.setCreationTime(System.currentTimeMillis());
                         userMap.put("steve", user);
                         add(new DefaultMutableTreeNode(user));
                         UserGroups group = new UserGroups("CS356");
                         node1 = new DefaultMutableTreeNode(group);
                         
                                 user = new User("stu1");
+                                user.setCreationTime(System.currentTimeMillis());
                                 userMap.put("stu1", user);
                                 
                                 node1.add(new DefaultMutableTreeNode(user));
                                 user = new User("stu2");
+                                user.setCreationTime(System.currentTimeMillis());
                                 userMap.put("stu2", user);
 
                                 node1.add(new DefaultMutableTreeNode(user));
                                 user = new User("stu3");
+                                user.setCreationTime(System.currentTimeMillis());
                                 userMap.put("stu3", user);
 
                                 node1.add(new DefaultMutableTreeNode(user));
                                 group = new UserGroups("CS356Session01");
                                 node2 = new DefaultMutableTreeNode(group);
                                         user = new User("stu8");
+                                        user.setCreationTime(System.currentTimeMillis());
                                         userMap.put("stu8", user);
 
                                         node2.add(new DefaultMutableTreeNode(user));
                                         user = new User("stu9");
+                                        user.setCreationTime(System.currentTimeMillis());
                                         userMap.put("stu9", user);
 
                                         node2.add(new DefaultMutableTreeNode(user));
                                         user = new User("stu10");
+                                        user.setCreationTime(System.currentTimeMillis());
                                         userMap.put("stu10", user);
 
                                         node2.add(new DefaultMutableTreeNode(user));
                                 node1.add(node2);
                                 user = new User("stu4");
+                                user.setCreationTime(System.currentTimeMillis());
                                 userMap.put("stu4", user);
                                 
                                 node1.add(new DefaultMutableTreeNode(user));
                         add(node1);
                         user = new User("oopstu");
+                        user.setCreationTime(System.currentTimeMillis());
                         userMap.put("oopstu", user);
 
                         add(new DefaultMutableTreeNode(user));
                         user = new User("ppstu2");
+                        user.setCreationTime(System.currentTimeMillis());
                         userMap.put("ppstu2", user);
 
                         add(new DefaultMutableTreeNode(user));
@@ -186,6 +205,8 @@ public class MiniTwitterApp extends JFrame {
         addUserButton.addActionListener(new ActionListener() {
             
             public void actionPerformed(ActionEvent e) {
+                long time = (long) System.currentTimeMillis();
+                
                 
                 DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
                 
@@ -220,6 +241,8 @@ public class MiniTwitterApp extends JFrame {
                         //node.add(newNode);
 
 
+
+                        user.setCreationTime(time);
 
 
                         tree.updateUI();
@@ -266,6 +289,8 @@ public class MiniTwitterApp extends JFrame {
 
 
 
+                        user.setCreationTime(time);
+
 
                         tree.updateUI();
 
@@ -296,7 +321,10 @@ public class MiniTwitterApp extends JFrame {
         addGroupButton.addActionListener(new ActionListener() {
             
             public void actionPerformed(ActionEvent e) {
+                long time = (long) System.currentTimeMillis();
                 UserGroups group = new UserGroups();
+                group.setCreationTime(time);
+                //time = group.getCreationTime();
                 group.setGroupID(textFieldGroup.getText());
                 System.out.println("Group: " + group.getGroupID() + " has been added.");
                 tree.setEditable(true);
@@ -304,7 +332,7 @@ public class MiniTwitterApp extends JFrame {
                 DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
                 DefaultMutableTreeNode newGroup = new DefaultMutableTreeNode(new UserGroups(textFieldGroup.getText()));
                 
-                //selectedNode.add(newGroup);
+                selectedNode.add(newGroup);
                 
                 
                 
@@ -332,10 +360,12 @@ public class MiniTwitterApp extends JFrame {
         openUserViewButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                
-                if (!userMap.containsKey(textFieldUser.getText())) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+     
+                if (!userMap.containsKey(node.toString())) {
                     System.out.println("User: "+textFieldUser.getText() + " does not exist.");
                 } else {
-                    UserView openView = new UserView(textFieldUser.getText());
+                    UserView openView = new UserView(node.toString());
                     openView.run(textFieldUser.getText());
                     System.out.println("Open User View : " + textFieldUser.getText());
                 }
@@ -402,7 +432,56 @@ public class MiniTwitterApp extends JFrame {
         textFieldUser.setEditable(false);
         textFieldGroup.setEditable(false);
 
-       
+        JButton userGroupVerification = new JButton();
+        userGroupVerification.setText("Verification");
+        userGroupVerification.setBounds(400, 525, 100, 66);
+        this.getContentPane().add(userGroupVerification);
+        
+        ArrayList<String> unVerified = new ArrayList<>();
+        
+        userGroupVerification.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                //for (int i = 0; i < userMap.size(); i++) {
+                    
+                    if (userMap.containsValue(" ") || userMap.containsKey(" ")) {
+                        unVerified.add(userMap.get(" ").getUserID());
+                    }
+                //}
+                infoView.setText("List of Unverified Users: " + Arrays.asList(unVerified).toString());
+                               
+            }
+           
+            
+        });
+        
+        
+        JButton lastUpdatedButton = new JButton();
+        lastUpdatedButton.setText("Last Updated");
+        lastUpdatedButton.setBounds(625,525,145,66);
+        this.getContentPane().add(lastUpdatedButton);
+        
+        lastUpdatedButton.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                Set s = userMap.entrySet();
+                for (Object o : s) {
+                    if ( o instanceof User) {
+                        ((User) o).getNewsFeed().get(((User) o).getNewsFeed().size()-1);
+                    }
+                }
+
+                
+                //infoView.setText("" + );
+            }
+            
+        });
+        
+        
         
         tree.addTreeSelectionListener(new TreeSelectionListener() {
         

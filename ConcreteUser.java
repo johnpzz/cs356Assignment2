@@ -13,7 +13,7 @@ package cs356program2;
 
 
 
-public class ConcreteUser implements Observer {
+public class ConcreteUser implements Observable {
 	
 	private String name;
 	private Subject subject;

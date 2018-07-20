@@ -17,11 +17,11 @@ import java.util.List;
 public interface Subject {
 	
 	
-    public void attach(Observer obs);
+    public void attach(Observable obs);
 
-    public void detach(Observer obs);
+    public void detach(Observable obs);
 
     public void notifyObservers();
 
-    public List<String> getUpdate(Observer obs);
+    public List<String> getUpdate(Observable obs);
 }

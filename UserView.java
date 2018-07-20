@@ -56,6 +56,8 @@ public class UserView extends JFrame {
         this.userID = user;
         if (MiniTwitterApp.userMap.containsKey(user)) {
             this.user = MiniTwitterApp.userMap.get(user);
+        } else {
+            System.out.println("User doesn't exist.");
         }
         
         initialize();
@@ -73,7 +75,7 @@ public class UserView extends JFrame {
 
     final JTextPane newsFeedTextPane = new JTextPane();
     newsFeedTextPane.setText("News Feed");
-    newsFeedTextPane.setBounds(10, 275, 469, 177);
+    newsFeedTextPane.setBounds(10, 275, 469, 125);
     this.getContentPane().add(newsFeedTextPane);
 
     currentFollowingTextPane = new JTextPane();
@@ -119,6 +121,14 @@ public class UserView extends JFrame {
     tweetMessageButton.setBounds(10, 216, 255, 48);
     this.getContentPane().add(tweetMessageButton);
     tweetMessageButton.setColumns(10);
+    
+    JTextPane creationTime = new JTextPane();
+    creationTime.setText("Creation Time: " + this.user.getCreationTime() + ", Update Time: " + this.user.getLastUpdateTime());
+    creationTime.setBounds(10, 410, 400, 25); 
+    this.getContentPane().add(creationTime);
+    creationTime.setEditable(false);
+ 
+
 
 
 
