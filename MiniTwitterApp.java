@@ -29,6 +29,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.JTextPane;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeSelectionModel;
 
 
@@ -84,8 +85,8 @@ public class MiniTwitterApp extends JFrame {
         Toolkit tk = Toolkit.getDefaultToolkit();
         Dimension dim = tk.getScreenSize();
      
-        int xPos = (dim.width/2 - this.getWidth()/2);
-        int yPos = (dim.height/2 - this.getHeight()/2);
+        int xPos = (dim.width/2 - this.getWidth()/2);   //1920/2 - 800/2 = 960 - 400 = 540
+        int yPos = (dim.height/2 - this.getHeight()/2); //1080/2 - 800/2 =  540 - 400 = 140
         
         this.setLocation(xPos,yPos);
         
@@ -105,6 +106,9 @@ public class MiniTwitterApp extends JFrame {
                     {
                         DefaultMutableTreeNode node1;
                         DefaultMutableTreeNode node2;
+                        DefaultMutableTreeNode node3;
+                        DefaultMutableTreeNode node4;
+                        DefaultMutableTreeNode node5;
                         User user = new User("john");
                         userMap.put("john", user);
                         add(new DefaultMutableTreeNode(user));
@@ -146,7 +150,7 @@ public class MiniTwitterApp extends JFrame {
                                 node1.add(node2);
                                 user = new User("stu4");
                                 userMap.put("stu4", user);
-
+                                
                                 node1.add(new DefaultMutableTreeNode(user));
                         add(node1);
                         user = new User("oopstu");
@@ -163,43 +167,119 @@ public class MiniTwitterApp extends JFrame {
         
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         
-    
 
-
+                
+        JTextPane infoView = new JTextPane();
+        infoView.setBounds(475, 250, 182, 66);
+        this.getContentPane().add(infoView);
+        infoView.setText("");
+        
+        
+        
+        
+        
+        
+        
 
 
         JButton addUserButton = new JButton("Add User");
         addUserButton.addActionListener(new ActionListener() {
+            
             public void actionPerformed(ActionEvent e) {
-                User user = new User();
-                user.setUserID(textFieldUser.getText());
+                
+                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+                
+                if (!selectedNode.isRoot()) {
+                    
+                    DefaultMutableTreeNode selectedNodeParent = (DefaultMutableTreeNode) selectedNode;
+                    
+                    if (selectedNodeParent.getAllowsChildren()) {                
 
-                //Check if adding user currently exists or is not a child of root
+                    User user = new User();
+                    user.setUserID(textFieldUser.getText());
 
-                if (!userMap.containsKey(textFieldUser.getText())) {
-                    userMap.put(textFieldUser.getText(), user);
-                    tree.setEditable(true);
-                    //add new tree node
-                    DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(new User(textFieldUser.getText()));
-                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getModel().getRoot();
-                    System.out.println(node.toString());
-                    node.add(newNode);
-                    
-                    
+                    //Check if adding user currently exists or is not a child of root
 
+                    if (!userMap.containsKey(textFieldUser.getText())) {
+                        userMap.put(textFieldUser.getText(), user);
+                        infoView.setText(textFieldUser.getText());
+                        tree.setEditable(true);
+                        //add new tree node
+
+                        //DefaultMutableTreeNode node = (DefaultMutableTreeNode) (tree.getLastSelectedPathComponent());
+                        //DefaultMutableTreeNode nodeP = (DefaultMutableTreeNode) node.getParent();
+
+                        selectedNodeParent.add(new DefaultMutableTreeNode(new User(textFieldUser.getText())));
+
+
+                        System.out.println(selectedNodeParent);
+
+                        //DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(new User(textFieldUser.getText()));
+                        //DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getModel().getRoot();
+                        //System.out.println(node.toString());
+                        //node.add(newNode);
+
+
+
+
+                        tree.updateUI();
+
+
+
+
+
+                        System.out.println("User: " + user.getUserID() + " has been added.");
+                    } else {
+                        System.out.println("User: " + user.getUserID() + " already exists.");
+                    }
+                }
                     
-                    tree.setEditable(false);
-                    tree.updateUI();
-                   
-                    
-                    
-                    
-                    
-                    System.out.println("User: " + user.getUserID() + " has been added.");
                 } else {
-                    System.out.println("User: " + user.getUserID() + " already exists.");
+                
+                    DefaultMutableTreeNode selectedNodeParent = selectedNode;
+
+                    if (selectedNodeParent.getAllowsChildren()) {                
+
+                    User user = new User();
+                    user.setUserID(textFieldUser.getText());
+
+                    //Check if adding user currently exists or is not a child of root
+
+                    if (!userMap.containsKey(textFieldUser.getText())) {
+                        userMap.put(textFieldUser.getText(), user);
+                        infoView.setText(textFieldUser.getText());
+                        tree.setEditable(true);
+                        //add new tree node
+
+                        //DefaultMutableTreeNode node = (DefaultMutableTreeNode) (tree.getLastSelectedPathComponent());
+                        //DefaultMutableTreeNode nodeP = (DefaultMutableTreeNode) node.getParent();
+
+                        selectedNodeParent.add(new DefaultMutableTreeNode(new User(textFieldUser.getText())));
+
+
+                        System.out.println(selectedNodeParent);
+
+                        //DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(new User(textFieldUser.getText()));
+                        //DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getModel().getRoot();
+                        //System.out.println(node.toString());
+                        //node.add(newNode);
+
+
+
+
+                        tree.updateUI();
+
+
+
+
+
+                        System.out.println("User: " + user.getUserID() + " has been added.");
+                    } else {
+                        System.out.println("User: " + user.getUserID() + " already exists.");
+                    }
                 }
 
+                }
             }
         });
         
@@ -219,6 +299,27 @@ public class MiniTwitterApp extends JFrame {
                 UserGroups group = new UserGroups();
                 group.setGroupID(textFieldGroup.getText());
                 System.out.println("Group: " + group.getGroupID() + " has been added.");
+                tree.setEditable(true);
+                
+                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+                DefaultMutableTreeNode newGroup = new DefaultMutableTreeNode(new UserGroups(textFieldGroup.getText()));
+                
+                //selectedNode.add(newGroup);
+                
+                
+                
+
+                                
+                
+                
+                //node.add(new DefaultMutableTreeNode(new UserGroups(textFieldGroup.getText())));
+                
+                
+                
+                tree.updateUI();
+                
+                
+                
             }
         });
         
@@ -242,6 +343,8 @@ public class MiniTwitterApp extends JFrame {
         });
         openUserViewButton.setBounds(395, 174, 374, 60);
         this.getContentPane().add(openUserViewButton);
+        
+        
 
         JButton showPositivePercentagesButton = new JButton("Show Positive Percentage");
         showPositivePercentagesButton.addActionListener(new ActionListener() {
@@ -284,17 +387,20 @@ public class MiniTwitterApp extends JFrame {
         this.getContentPane().add(showGroupTotalButton);
 
         textFieldUser = new JTextField();
-        textFieldUser.setText("User Id");
+        textFieldUser.setText("");
         textFieldUser.setBounds(395, 11, 182, 26);
+        //this.add(textFieldUser);
         this.getContentPane().add(textFieldUser);
         textFieldUser.setColumns(10);
 
         textFieldGroup = new JTextField();
-        textFieldGroup.setText("Group Id");
+        textFieldGroup.setText("");
         textFieldGroup.setBounds(587, 11, 182, 26);
         this.getContentPane().add(textFieldGroup);
         textFieldGroup.setColumns(10);
 
+        textFieldUser.setEditable(false);
+        textFieldGroup.setEditable(false);
 
        
         
@@ -310,12 +416,17 @@ public class MiniTwitterApp extends JFrame {
                 }
                 
                 if (node.isLeaf()) {
+                    textFieldUser.setEditable(false);
+                    textFieldGroup.setEditable(false);
                     System.out.println("Leaf node has been selected. ");
-                    textFieldUser.setText(node.toString());
-                    textFieldGroup.setText(node.getParent().toString());
+                    infoView.setText("User: " + node.toString() + "    Group: " + node.getParent().toString());;
+                    //textFieldUser.setText(node.toString());
+                    //textFieldGroup.setText(node.getParent().toString());
                     //textFieldUserID.setText(node.getUserObject().toString());
                     
                 } else {
+                    textFieldUser.setEditable(true);
+                    textFieldGroup.setEditable(true);
                     
                 }
                 
